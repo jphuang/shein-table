@@ -1,0 +1,143 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>SHEIN商品查询</title>
+  <!-- 使用本地Bootstrap CSS -->
+  <link href="css/bootstrap.min.css" rel="stylesheet">
+  <style>
+    .form-group {
+      margin-bottom: 15px;
+    }
+    .input-group-text {
+      width: 100px;
+    }
+    .form-control, .form-select {
+      max-width: 200px;
+    }
+    .product-img {
+      width: 100px;
+      height: auto;
+      cursor: pointer;
+      transition: transform 0.3s ease;
+    }
+    .product-img:hover {
+      transform: scale(1.1);
+    }
+    .modal-body img {
+      max-width: 100%;
+      height: auto;
+    }
+  </style>
+  <!-- 使用本地SheetJS库 -->
+  <script src="js/xlsx.full.min.js"></script>
+</head>
+<body class="container mt-5">
+  <h1 class="mb-2">SHEIN商品查询</h1>
+  <p class="text-muted mb-4">本查询基于免费api, 所有用户的查询频率是200次每月</p>
+  <form class="row g-3 align-items-end">
+    <div class="col-md-4">
+      <div class="input-group">
+        <span class="input-group-text">关键词</span>
+        <input type="text" id="keywords" class="form-control" placeholder="输入搜索关键词" required>
+        <div class="invalid-feedback">
+          请输入搜索关键词
+        </div>
+      </div>
+    </div>
+    <div class="col-md-3">
+      <div class="input-group">
+        <span class="input-group-text">排序方式</span>
+        <select id="sort" class="form-select">
+          <option value="recommend">推荐</option>
+          <option value="new_arrivals">新品</option>
+          <option value="top_rated">评分最高</option>
+          <option value="most_popular">最受欢迎</option>
+          <option value="price_asc">价格从低到高</option>
+          <option value="price_desc">价格从高到低</option>
+        </select>
+      </div>
+    </div>
+    <div class="col-md-3">
+      <div class="input-group">
+        <span class="input-group-text">每页数量</span>
+        <input type="number" id="size" class="form-control" value="22" min="1" max="100">
+      </div>
+    </div>
+    <div class="col-md-2">
+      <button id="fetchData" class="btn btn-primary w-100 mb-2">搜索</button>
+      <button id="exportExcel" class="btn btn-success w-100">导出Excel</button>
+    </div>
+    <div class="col-md-3">
+      <div class="input-group">
+        <span class="input-group-text">国家</span>
+        <input type="text" id="country" class="form-control" value="us">
+      </div>
+    </div>
+    <div class="col-md-3">
+      <div class="input-group">
+        <span class="input-group-text">语言</span>
+        <input type="text" id="language" class="form-control" value="en">
+      </div>
+    </div>
+    <div class="col-md-3">
+      <div class="input-group">
+        <span class="input-group-text">货币</span>
+        <input type="text" id="currency" class="form-control" value="usd">
+      </div>
+    </div>
+  </form>
+  
+  <nav aria-label="Page navigation" class="mt-4 mb-2">
+    <ul class="pagination justify-content-center">
+      <li class="page-item">
+        <button id="prevPage" class="page-link">上一页</button>
+      </li>
+      <li class="page-item">
+        <span id="currentPage" class="page-link"></span>
+      </li>
+      <li class="page-item">
+        <button id="nextPage" class="page-link">下一页</button>
+      </li>
+    </ul>
+  </nav>
+
+  <div id="tableContainer" class="mt-2"></div>
+  
+  <!-- 修改图片放大模态框 -->
+  <div class="modal fade" id="imageModal" tabindex="-1" aria-labelledby="imageModalLabel" aria-hidden="true">
+    <div class="modal-dialog modal-lg">
+      <div class="modal-content">
+        <div class="modal-body text-center p-0">
+          <img id="modalImage" src="" alt="放大图片" style="max-width: 100%; height: auto;">
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- 修改商品详情模态框 -->
+  <div class="modal fade" id="productDetailModal" tabindex="-1" aria-labelledby="productDetailModalLabel" aria-hidden="true">
+    <div class="modal-dialog modal-lg">
+      <div class="modal-content">
+        <div class="modal-header">
+          <h5 class="modal-title" id="productDetailModalLabel">商品详情</h5>
+          <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="关闭"></button>
+        </div>
+        <div class="modal-body" id="productDetailContent">
+          <!-- 商品详情将在这里动态加载 -->
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- 使用本地Bootstrap JS -->
+  <script src="js/bootstrap.bundle.min.js"></script>
+  
+  <!-- 引入新的JS文件 -->
+  <script src="js/table.js"></script>
+  <script src="js/excel.js"></script>
+  <script src="js/productDetails.js"></script>
+  <script src="js/main.js"></script>
+</body>
+</html>

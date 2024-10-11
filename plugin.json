@@ -1,0 +1,12 @@
+{
+  "main": "index.html",
+  "logo": "logo.png",
+  "features": [
+    {
+      "code": "shein-table",
+      "explain": "SHEIN表格处理工具",
+      "cmds": ["shein", "表格处理"]
+    }
+  ],
+  "permissions": ["webview"]
+}
