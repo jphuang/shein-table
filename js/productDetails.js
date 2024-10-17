@@ -3,6 +3,15 @@ async function fetchProductDetails(goodsId) {
   const country = document.getElementById('country').value;
   const language = document.getElementById('language').value;
 
+  const cacheKey = `product_${goodsId}_${currency}_${country}_${language}`;
+
+  // 尝试从缓存获取数据
+  const cachedData = utools.db.get(cacheKey);
+  if (cachedData && cachedData.expiry > Date.now()) {
+    displayProductDetails(cachedData.data);
+    return;
+  }
+
   const url = `https://shein-scraper-api.p.rapidapi.com/shein/product/details?goods_id=${goodsId}&currency=${currency}&country=${country}&language=${language}`;
   const options = {
     method: 'GET',
@@ -18,6 +27,14 @@ async function fetchProductDetails(goodsId) {
       throw new Error(`HTTP error! status: ${response.status}`);
     }
     const result = await response.json();
+
+    // 将数据存入缓存，有效期3天
+    utools.db.put({
+      _id: cacheKey,
+      data: result,
+      expiry: Date.now() + 3 * 24 * 60 * 60 * 1000
+    });
+
     displayProductDetails(result);
   } catch (error) {
     console.error('Error:', error);

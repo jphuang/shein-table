@@ -12,6 +12,17 @@ async function fetchData() {
   const language = document.getElementById('language').value;
   const currency = document.getElementById('currency').value;
 
+  const cacheKey = `search_${keywords}_${sort}_${size}_${currentPage}_${country}_${language}_${currency}`;
+  
+  // 尝试从缓存获取数据
+  const cachedData = utools.db.get(cacheKey);
+  if (cachedData && cachedData.expiry > Date.now()) {
+    allData = cachedData.data;
+    displayTable();
+    updatePagination();
+    return;
+  }
+
   const url = `https://shein-scraper-api.p.rapidapi.com/shein/search/products?keywords=${encodeURIComponent(keywords)}&sort=${sort}&size=${size}&page=${currentPage}&country=${country}&language=${language}&currency=${currency}`;
   const options = {
     method: 'GET',
@@ -26,6 +37,14 @@ async function fetchData() {
     const response = await fetch(url, options);
     const result = await response.json();
     allData = result.data;
+
+    // 将数据存入缓存，有效期3天
+    utools.db.put({
+      _id: cacheKey,
+      data: allData,
+      expiry: Date.now() + 3 * 24 * 60 * 60 * 1000
+    });
+
     displayTable();
     updatePagination();
   } catch (error) {
